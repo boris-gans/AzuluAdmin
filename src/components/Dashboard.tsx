@@ -50,10 +50,10 @@ const Dashboard: React.FC = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="static"
-        color="primary"
+        color="default"
         elevation={0}
         sx={{
-          borderBottom: "2px solid #000",
+          bgcolor: "white",
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -63,6 +63,7 @@ const Dashboard: React.FC = () => {
             sx={{
               fontWeight: 700,
               letterSpacing: "-0.02em",
+              color: "black",
             }}
           >
             Azulu Admin Dashboard
@@ -72,10 +73,11 @@ const Dashboard: React.FC = () => {
             onClick={logout}
             startIcon={<LogoutOutlined />}
             sx={{
-              borderLeft: "1px solid rgba(255,255,255,0.3)",
+              borderLeft: "1px solid rgba(0,0,0,0.1)",
               borderRadius: 0,
               pl: 2,
               height: "100%",
+              color: "black",
             }}
           >
             Logout
@@ -89,7 +91,6 @@ const Dashboard: React.FC = () => {
           sx={{
             p: 3,
             mb: 4,
-            border: "1px solid #000",
             boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
           }}
         >
@@ -112,7 +113,6 @@ const Dashboard: React.FC = () => {
           elevation={0}
           sx={{
             width: "100%",
-            border: "1px solid #000",
             boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
             overflow: "hidden",
           }}
@@ -124,7 +124,6 @@ const Dashboard: React.FC = () => {
             indicatorColor="primary"
             textColor="primary"
             sx={{
-              borderBottom: "1px solid #000",
               "& .MuiTabs-indicator": {
                 height: 3,
                 backgroundColor: theme.palette.primary.main,

@@ -167,13 +167,13 @@ const EventList: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          px: 4,
         }}
       >
         <Typography
           variant="h5"
           sx={{
             fontWeight: 700,
-            textTransform: "uppercase",
             letterSpacing: "-0.02em",
           }}
         >
@@ -218,103 +218,108 @@ const EventList: React.FC = () => {
         </Paper>
       )}
 
-      <TableContainer
-        component={Paper}
-        elevation={0}
-        sx={{
-          border: "1px solid #000",
-          boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
-          mb: 4,
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
-              <TableCell sx={{ fontWeight: 600, py: 2 }}>Event Name</TableCell>
-              <TableCell sx={{ fontWeight: 600, py: 2 }}>Venue</TableCell>
-              <TableCell sx={{ fontWeight: 600, py: 2 }}>Date & Time</TableCell>
-              <TableCell sx={{ fontWeight: 600, py: 2 }}>
-                Ticket Status
-              </TableCell>
-              <TableCell sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {events.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontStyle: "italic", color: "text.secondary" }}
-                  >
-                    No events found. Create your first event!
-                  </Typography>
+      <Box sx={{ px: 4 }}>
+        <TableContainer
+          component={Paper}
+          elevation={0}
+          sx={{
+            boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
+            mb: 4,
+          }}
+        >
+          <Table sx={{ width: "calc(100% - 48px)", mx: "auto" }}>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>
+                  Event Name
                 </TableCell>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>Venue</TableCell>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>
+                  Date & Time
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>
+                  Ticket Status
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
               </TableRow>
-            ) : (
-              events.map((event) => (
-                <TableRow
-                  key={event.id}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "rgba(0,0,0,0.02)",
-                    },
-                  }}
-                >
-                  <TableCell sx={{ fontWeight: 500 }}>{event.name}</TableCell>
-                  <TableCell>{event.venue_name}</TableCell>
-                  <TableCell
-                    sx={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "0.85rem",
-                      fontWeight: 500,
-                      letterSpacing: "-0.05em",
-                    }}
-                  >
-                    {formatEventDate(event.start_time)}
-                  </TableCell>
-                  <TableCell>
-                    {getTicketStatusChip(event.ticket_status)}
-                  </TableCell>
-                  <TableCell>
-                    <Stack direction="row" spacing={1}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenForm(event)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "primary.main",
-                          p: "4px",
-                          "&:hover": {
-                            backgroundColor: "rgba(0,0,0,0.05)",
-                          },
-                        }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteClick(event.id)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "error.main",
-                          p: "4px",
-                          "&:hover": {
-                            backgroundColor: "rgba(244,67,54,0.05)",
-                          },
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Stack>
+            </TableHead>
+            <TableBody>
+              {events.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                    <Typography
+                      variant="body1"
+                      sx={{ fontStyle: "italic", color: "text.secondary" }}
+                    >
+                      No events found. Create your first event!
+                    </Typography>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ) : (
+                events.map((event) => (
+                  <TableRow
+                    key={event.id}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "rgba(0,0,0,0.02)",
+                      },
+                    }}
+                  >
+                    <TableCell sx={{ fontWeight: 500 }}>{event.name}</TableCell>
+                    <TableCell>{event.venue_name}</TableCell>
+                    <TableCell
+                      sx={{
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: "0.85rem",
+                        fontWeight: 500,
+                        letterSpacing: "-0.05em",
+                      }}
+                    >
+                      {formatEventDate(event.start_time)}
+                    </TableCell>
+                    <TableCell>
+                      {getTicketStatusChip(event.ticket_status)}
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" spacing={1}>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleOpenForm(event)}
+                          sx={{
+                            border: "1px solid",
+                            borderColor: "primary.main",
+                            p: "4px",
+                            "&:hover": {
+                              backgroundColor: "rgba(0,0,0,0.05)",
+                            },
+                          }}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleDeleteClick(event.id)}
+                          sx={{
+                            border: "1px solid",
+                            borderColor: "error.main",
+                            p: "4px",
+                            "&:hover": {
+                              backgroundColor: "rgba(244,67,54,0.05)",
+                            },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
       {isFormOpen && (
         <EventForm

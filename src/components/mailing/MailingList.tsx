@@ -111,6 +111,7 @@ const MailingList: React.FC = () => {
         justifyContent="space-between"
         alignItems="center"
         mb={3}
+        sx={{ px: 4 }}
       >
         <Typography variant="h5" fontWeight={600}>
           Mailing List
@@ -143,112 +144,113 @@ const MailingList: React.FC = () => {
         </Paper>
       )}
 
-      <Paper
-        elevation={0}
-        sx={{
-          width: "100%",
-          overflow: "hidden",
-          border: "1px solid #000",
-          boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
-          borderRadius: 1,
-        }}
-      >
-        <TableContainer>
-          <Table>
-            <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date Joined</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
+      <Box sx={{ px: 4 }}>
+        <Paper
+          elevation={0}
+          sx={{
+            width: "100%",
+            overflow: "hidden",
+            boxShadow: "4px 4px 0px rgba(0, 0, 0, 0.2)",
+            borderRadius: 1,
+          }}
+        >
+          <TableContainer>
+            <Table>
+              <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
                 <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                    <CircularProgress size={40} />
-                  </TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Date Joined</TableCell>
+                  <TableCell align="right">Actions</TableCell>
                 </TableRow>
-              ) : entries.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                    <Typography variant="body1" color="textSecondary">
-                      No mailing list entries found
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                entries.map((entry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell>{entry.name}</TableCell>
-                    <TableCell>{entry.email}</TableCell>
-                    <TableCell>
-                      <Box
-                        component="span"
-                        sx={{
-                          py: 0.5,
-                          px: 1.5,
-                          borderRadius: 1,
-                          fontSize: "0.8rem",
-                          fontWeight: 600,
-                          backgroundColor:
-                            entry.subscribed !== false
-                              ? "rgba(76, 175, 80, 0.1)"
-                              : "rgba(244, 67, 54, 0.1)",
-                          color:
-                            entry.subscribed !== false
-                              ? "rgb(76, 175, 80)"
-                              : "rgb(244, 67, 54)",
-                        }}
-                      >
-                        {entry.subscribed !== false
-                          ? "Subscribed"
-                          : "Unsubscribed"}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      {entry.created_at
-                        ? formatDate(entry.created_at)
-                        : "Unknown"}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Delete">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDeleteEntry(entry.id)}
-                          sx={{
-                            color: "#d32f2f",
-                            "&:hover": {
-                              backgroundColor: "rgba(211, 47, 47, 0.04)",
-                            },
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
+              </TableHead>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                      <CircularProgress size={40} />
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ) : entries.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                      <Typography variant="body1" color="textSecondary">
+                        No mailing list entries found
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  entries.map((entry) => (
+                    <TableRow key={entry.id}>
+                      <TableCell>{entry.name}</TableCell>
+                      <TableCell>{entry.email}</TableCell>
+                      <TableCell>
+                        <Box
+                          component="span"
+                          sx={{
+                            py: 0.5,
+                            px: 1.5,
+                            borderRadius: 1,
+                            fontSize: "0.8rem",
+                            fontWeight: 600,
+                            backgroundColor:
+                              entry.subscribed !== false
+                                ? "rgba(76, 175, 80, 0.1)"
+                                : "rgba(244, 67, 54, 0.1)",
+                            color:
+                              entry.subscribed !== false
+                                ? "rgb(76, 175, 80)"
+                                : "rgb(244, 67, 54)",
+                          }}
+                        >
+                          {entry.subscribed !== false
+                            ? "Subscribed"
+                            : "Unsubscribed"}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        {entry.created_at
+                          ? formatDate(entry.created_at)
+                          : "Unknown"}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Delete">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDeleteEntry(entry.id)}
+                            sx={{
+                              color: "#d32f2f",
+                              "&:hover": {
+                                backgroundColor: "rgba(211, 47, 47, 0.04)",
+                              },
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        {!loading && entries.length > 0 && (
-          <Box display="flex" justifyContent="center" p={2}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
-        )}
-      </Paper>
+          {!loading && entries.length > 0 && (
+            <Box display="flex" justifyContent="center" p={2}>
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                variant="outlined"
+                shape="rounded"
+              />
+            </Box>
+          )}
+        </Paper>
+      </Box>
     </Box>
   );
 };

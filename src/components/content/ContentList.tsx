@@ -242,6 +242,7 @@ const ContentList: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          px: 4,
         }}
       >
         <Typography variant="h5">Content</Typography>
@@ -278,57 +279,59 @@ const ContentList: React.FC = () => {
         </Typography>
       )}
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Key</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>String Collection</TableCell>
-              <TableCell>Big String</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {contents.length === 0 ? (
+      <Box sx={{ px: 4 }}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No content found. Create your first content item!
-                </TableCell>
+                <TableCell>Key</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>String Collection</TableCell>
+                <TableCell>Big String</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ) : (
-              contents.map((content) => (
-                <TableRow key={content.id}>
-                  <TableCell>{content.key}</TableCell>
-                  <TableCell>{getContentTypeLabel(content)}</TableCell>
-                  <TableCell>
-                    {formatStringCollection(content.string_collection)}
-                  </TableCell>
-                  <TableCell>{truncateString(content.big_string)}</TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex" }}>
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={() => handleOpenForm(content)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteDialogOpen(content)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
+            </TableHead>
+            <TableBody>
+              {contents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    No content found. Create your first content item!
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ) : (
+                contents.map((content) => (
+                  <TableRow key={content.id}>
+                    <TableCell>{content.key}</TableCell>
+                    <TableCell>{getContentTypeLabel(content)}</TableCell>
+                    <TableCell>
+                      {formatStringCollection(content.string_collection)}
+                    </TableCell>
+                    <TableCell>{truncateString(content.big_string)}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: "flex" }}>
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleOpenForm(content)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => handleDeleteDialogOpen(content)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
       {isFormOpen && (
         <ContentForm
