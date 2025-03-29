@@ -16,6 +16,7 @@ import { LogoutOutlined } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import EventList from "./events/EventList";
 import ContentList from "./content/ContentList";
+import MailingList from "./mailing/MailingList";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -141,6 +142,7 @@ const Dashboard: React.FC = () => {
           >
             <Tab label="Events" id="tab-0" aria-controls="tabpanel-0" />
             <Tab label="Content" id="tab-1" aria-controls="tabpanel-1" />
+            <Tab label="Mailing List" id="tab-2" aria-controls="tabpanel-2" />
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
@@ -148,6 +150,9 @@ const Dashboard: React.FC = () => {
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <ContentList />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2}>
+            <MailingList />
           </TabPanel>
         </Paper>
       </Container>

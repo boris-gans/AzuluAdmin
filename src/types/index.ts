@@ -35,4 +35,17 @@ export interface CloudinarySignature {
   timestamp: number;
   cloudName: string;
   apiKey: string;
+}
+
+export interface MailingListEntry {
+  id: number;
+  name: string;
+  email: string;
+  subscribed: boolean;
+  created_at: string;
+}
+
+export interface MailingListResponse {
+  items: MailingListEntry[];
+  total: number;
 } 

@@ -6,7 +6,9 @@ import {
   Content, 
   ContentCreate, 
   ContentUpdate,
-  CloudinarySignature 
+  CloudinarySignature,
+  MailingListEntry,
+  MailingListResponse
 } from '../types';
 
 // The proxy setup isn't working properly, so let's use direct API access
@@ -181,6 +183,47 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error getting Cloudinary signature:', error);
+      throw error;
+    }
+  },
+
+  // Mailing List
+  getMailingList: async (skip = 0, limit = 20, subscribedOnly = true): Promise<MailingListResponse> => {
+    try {
+      const { data } = await directApi.get('/mailing-list', {
+        params: { skip, limit, subscribed_only: subscribedOnly }
+      });
+      
+      // Handle case where API returns an array directly instead of {items, total} structure
+      if (Array.isArray(data)) {
+        return {
+          items: data,
+          total: data.length + skip // Approximation since we don't know the total
+        };
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error fetching mailing list:', error);
+      throw error;
+    }
+  },
+
+  getMailingListEntry: async (id: number): Promise<MailingListEntry> => {
+    try {
+      const { data } = await directApi.get(`/mailing-list/${id}`);
+      return data;
+    } catch (error) {
+      console.error(`Error fetching mailing list entry ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteMailingListEntry: async (id: number): Promise<void> => {
+    try {
+      await directApi.delete(`/mailing-list/${id}`);
+    } catch (error) {
+      console.error(`Error deleting mailing list entry ${id}:`, error);
       throw error;
     }
   },
