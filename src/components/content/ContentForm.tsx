@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
   TextField,
   Typography,
@@ -11,6 +7,7 @@ import {
   Grid,
   Chip,
   CircularProgress,
+  Paper,
 } from "@mui/material";
 import { Content, ContentCreate, ContentUpdate } from "../../types";
 import apiService from "../../services/api";
@@ -47,12 +44,25 @@ const ContentForm: React.FC<ContentFormProps> = ({
   const [keyError, setKeyError] = useState("");
 
   const isEditMode = !!content;
+  const isMovingBanner =
+    content?.key === "movingBanner" ||
+    (!isEditMode && "key" in formData && formData.key === "movingBanner");
+  const isAboutPage =
+    content?.key === "aboutPage" ||
+    (!isEditMode && "key" in formData && formData.key === "aboutPage");
 
   useEffect(() => {
     if (content) {
       setFormData({ ...content });
     } else {
       setFormData({ ...EMPTY_CONTENT });
+    }
+
+    // Set default key if it's a special content type being created
+    if (!content && window.location.search.includes("type=movingBanner")) {
+      setFormData((prev) => ({ ...prev, key: "movingBanner" }));
+    } else if (!content && window.location.search.includes("type=aboutPage")) {
+      setFormData((prev) => ({ ...prev, key: "aboutPage" }));
     }
   }, [content]);
 
@@ -143,106 +153,186 @@ const ContentForm: React.FC<ContentFormProps> = ({
     }
   };
 
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>
-        {isEditMode ? `Edit Content: ${content.key}` : "Create New Content"}
-      </DialogTitle>
-      <form onSubmit={handleSubmit}>
-        <DialogContent>
-          {error && (
-            <Typography color="error" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
-          )}
+  if (!open) return null;
 
-          <GridContainer spacing={2}>
-            {!isEditMode && (
-              <GridItem xs={12}>
-                <TextField
-                  name="key"
-                  label="Content Key"
-                  fullWidth
-                  value={"key" in formData ? formData.key : ""}
-                  onChange={handleChange}
-                  required
-                  error={!!keyError}
-                  helperText={keyError}
-                  disabled={isEditMode}
-                />
-              </GridItem>
+  return (
+    <div
+      className="modal-backdrop"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1300,
+      }}
+    >
+      <Paper
+        elevation={24}
+        style={{
+          width: "100%",
+          maxWidth: 800,
+          maxHeight: "90vh",
+          overflow: "auto",
+          padding: 24,
+        }}
+      >
+        <div className="modal-header" style={{ marginBottom: 16 }}>
+          <Typography variant="h6">
+            {isEditMode
+              ? `Edit Content: ${content.key}`
+              : isMovingBanner
+              ? "Moving Banner Settings"
+              : isAboutPage
+              ? "About Page Content"
+              : "Create New Content"}
+          </Typography>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="modal-content">
+            {error && (
+              <Typography color="error" sx={{ mb: 2 }}>
+                {error}
+              </Typography>
             )}
 
-            <GridItem xs={12}>
-              <Box sx={{ mb: 1 }}>
-                <Typography variant="subtitle1">String Collection</Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Add strings that will be displayed as a collection (e.g.,
-                  FAQs, list items)
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
-                <TextField
-                  value={stringInput}
-                  onChange={(e) => setStringInput(e.target.value)}
-                  label="Add string"
-                  size="small"
-                  fullWidth
-                />
-                <Button
-                  variant="outlined"
-                  onClick={handleAddString}
-                  disabled={!stringInput.trim()}
-                >
-                  Add
-                </Button>
-              </Box>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {(formData.string_collection || []).map((str, index) => (
-                  <Chip
-                    key={index}
-                    label={str.length > 20 ? `${str.substring(0, 20)}...` : str}
-                    onDelete={() => handleRemoveString(index)}
+            <GridContainer spacing={2}>
+              {!isEditMode && !isMovingBanner && !isAboutPage && (
+                <GridItem xs={12}>
+                  <TextField
+                    name="key"
+                    label="Content Key"
+                    fullWidth
+                    value={"key" in formData ? formData.key : ""}
+                    onChange={handleChange}
+                    required
+                    error={!!keyError}
+                    helperText={keyError}
+                    disabled={isEditMode}
                   />
-                ))}
-              </Box>
-            </GridItem>
+                </GridItem>
+              )}
 
-            <GridItem xs={12}>
-              <TextField
-                name="big_string"
-                label="Big String"
-                fullWidth
-                multiline
-                rows={6}
-                value={formData.big_string || ""}
-                onChange={handleChange}
-                helperText="Large text content like terms of service, about text, etc."
-              />
-            </GridItem>
-          </GridContainer>
-        </DialogContent>
+              {/* Hidden field for predefined keys */}
+              {!isEditMode && (isMovingBanner || isAboutPage) && (
+                <input
+                  type="hidden"
+                  name="key"
+                  value={isMovingBanner ? "movingBanner" : "aboutPage"}
+                />
+              )}
 
-        <DialogActions>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : null}
+              {isMovingBanner && (
+                <GridItem xs={12}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mb: 2 }}
+                  >
+                    The moving banner displays a rotating series of text
+                    elements at the top of the homepage. Each string you add
+                    will display as a separate item in the banner.
+                  </Typography>
+                </GridItem>
+              )}
+
+              {(isMovingBanner || (!isAboutPage && !isMovingBanner)) && (
+                <GridItem xs={12}>
+                  <Box sx={{ mb: 1 }}>
+                    <Typography variant="subtitle1">
+                      {isMovingBanner ? "Banner Items" : "String Collection"}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {isMovingBanner
+                        ? "Add text items to display in the rotating banner"
+                        : "Add strings that will be displayed as a collection (e.g., FAQs, list items)"}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                    <TextField
+                      value={stringInput}
+                      onChange={(e) => setStringInput(e.target.value)}
+                      label={isMovingBanner ? "Add banner item" : "Add string"}
+                      size="small"
+                      fullWidth
+                    />
+                    <Button
+                      variant="outlined"
+                      onClick={handleAddString}
+                      disabled={!stringInput.trim()}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {(formData.string_collection || []).map((str, index) => (
+                      <Chip
+                        key={index}
+                        label={
+                          str.length > 20 ? `${str.substring(0, 20)}...` : str
+                        }
+                        onDelete={() => handleRemoveString(index)}
+                      />
+                    ))}
+                  </Box>
+                </GridItem>
+              )}
+
+              {(isAboutPage || (!isAboutPage && !isMovingBanner)) && (
+                <GridItem xs={12}>
+                  <TextField
+                    name="big_string"
+                    label={isAboutPage ? "About Page Content" : "Big String"}
+                    fullWidth
+                    multiline
+                    rows={isAboutPage ? 10 : 6}
+                    value={formData.big_string || ""}
+                    onChange={handleChange}
+                    helperText={
+                      isAboutPage
+                        ? "This text will be displayed on the About page"
+                        : "Large text content like terms of service, about text, etc."
+                    }
+                  />
+                </GridItem>
+              )}
+            </GridContainer>
+          </div>
+
+          <div
+            className="modal-footer"
+            style={{
+              marginTop: 24,
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 8,
+            }}
           >
-            {loading
-              ? "Saving..."
-              : isEditMode
-              ? "Update Content"
-              : "Create Content"}
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+            <Button onClick={onClose} disabled={loading}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : null}
+            >
+              {loading
+                ? "Saving..."
+                : isEditMode
+                ? "Update Content"
+                : "Create Content"}
+            </Button>
+          </div>
+        </form>
+      </Paper>
+    </div>
   );
 };
 

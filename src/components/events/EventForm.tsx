@@ -46,7 +46,6 @@ const GENRE_OPTIONS = [
   "House",
   "Melodic Techno",
   "Progressive House",
-  "Minimal",
   "Disco",
 ];
 
@@ -209,282 +208,558 @@ const EventForm: React.FC<EventFormProps> = ({
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 1,
-          boxShadow: 3,
-        },
-      }}
-    >
-      <DialogTitle sx={{ borderBottom: 1, borderColor: "divider", pb: 2 }}>
-        {event ? "Edit Event" : "Create New Event"}
-      </DialogTitle>
-
-      <form onSubmit={handleSubmit}>
-        <DialogContent sx={{ p: 3 }}>
-          {error && (
-            <Box sx={{ mb: 2, p: 2, bgcolor: "error.light", borderRadius: 1 }}>
-              <Typography color="error">{error}</Typography>
-            </Box>
-          )}
-
-          <Typography variant="h6" sx={{ mt: 2, mb: 3 }}>
-            Basic Information
-          </Typography>
-
-          <GridContainer spacing={2}>
-            <GridItem xs={12}>
-              <TextField
-                name="name"
-                label="Event Name"
-                fullWidth
-                required
-                value={formData.name || ""}
-                onChange={handleChange}
-                margin="normal"
-              />
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <TextField
-                name="venue_name"
-                label="Venue Name"
-                fullWidth
-                required
-                value={formData.venue_name || ""}
-                onChange={handleChange}
-                margin="normal"
-              />
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <TextField
-                name="address"
-                label="Address"
-                fullWidth
-                required
-                value={formData.address || ""}
-                onChange={handleChange}
-                margin="normal"
-              />
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
-                  label="Start Time"
-                  value={parseDate(formData.start_time)}
-                  onChange={(date) => handleDateChange("start_time", date)}
-                  sx={{ width: "100%", mt: 2 }}
-                />
-              </LocalizationProvider>
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DateTimePicker
-                  label="End Time"
-                  value={parseDate(formData.end_time)}
-                  onChange={(date) => handleDateChange("end_time", date)}
-                  sx={{ width: "100%", mt: 2 }}
-                />
-              </LocalizationProvider>
-            </GridItem>
-          </GridContainer>
-
-          <Typography variant="h6" sx={{ mt: 4, mb: 3 }}>
-            Ticket Information
-          </Typography>
-
-          <GridContainer spacing={2}>
-            <GridItem xs={12} md={6}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Ticket Status</InputLabel>
-                <Select
-                  name="ticket_status"
-                  value={formData.ticket_status || "Available"}
-                  label="Ticket Status"
-                  onChange={handleSelectChange}
-                >
-                  {TICKET_STATUS_OPTIONS.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <TextField
-                name="ticket_link"
-                label="Ticket Link"
-                fullWidth
-                value={formData.ticket_link || ""}
-                onChange={handleChange}
-                margin="normal"
-              />
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <TextField
-                name="price"
-                label="Price"
-                type="number"
-                fullWidth
-                value={formData.price || ""}
-                onChange={handleNumberChange}
-                margin="normal"
-              />
-            </GridItem>
-
-            <GridItem xs={12} md={6}>
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Currency</InputLabel>
-                <Select
-                  name="currency"
-                  value={formData.currency || "USD"}
-                  label="Currency"
-                  onChange={handleSelectChange}
-                >
-                  {CURRENCY_OPTIONS.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </GridItem>
-          </GridContainer>
-
-          <Typography variant="h6" sx={{ mt: 4, mb: 3 }}>
-            Event Details
-          </Typography>
-
-          <TextField
-            name="description"
-            label="Description"
-            fullWidth
-            multiline
-            rows={4}
-            value={formData.description || ""}
-            onChange={handleChange}
-            margin="normal"
-          />
-
-          <Box sx={{ mt: 3, mb: 3 }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Event Poster
-            </Typography>
-            <ImageUploader
-              onImageUploaded={(imageUrl) => {
-                setFormData((prev) => ({ ...prev, poster_url: imageUrl }));
-              }}
-              currentImage={formData.poster_url}
-              label="Upload Event Poster"
-              required={true}
-            />
-          </Box>
-
-          <Typography variant="h6" sx={{ mt: 4, mb: 3 }}>
-            Lineup
-          </Typography>
-
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <TextField
-              label="Artist Name"
-              fullWidth
-              value={artistInput}
-              onChange={(e) => setArtistInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addArtist();
-                }
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={addArtist}
-              disabled={!artistInput.trim()}
-            >
-              Add
-            </Button>
-          </Box>
-
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
-            {(formData.lineup || []).map((artist, index) => (
-              <Chip
-                key={index}
-                label={artist}
-                onDelete={() => removeArtist(index)}
-              />
-            ))}
-          </Box>
-
-          <Typography variant="h6" sx={{ mt: 4, mb: 3 }}>
-            Genres
-          </Typography>
-
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
-            {GENRE_OPTIONS.map((genre) => {
-              const isSelected = (formData.genres || []).includes(genre);
-              return (
-                <Chip
-                  key={genre}
-                  label={genre}
-                  onClick={() => toggleGenre(genre)}
-                  color={isSelected ? "primary" : "default"}
-                  variant={isSelected ? "filled" : "outlined"}
-                  sx={{ mb: 1 }}
-                />
-              );
-            })}
-          </Box>
-
-          <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-            <TextField
-              label="Custom Genre"
-              fullWidth
-              value={customGenreInput}
-              onChange={(e) => setCustomGenreInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  addCustomGenre();
-                }
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={addCustomGenre}
-              disabled={!customGenreInput.trim()}
-            >
-              Add
-            </Button>
-          </Box>
-        </DialogContent>
-
-        <DialogActions sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : null}
+    <>
+      {open && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            zIndex: 1300,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backdropFilter: "blur(5px)",
+          }}
+          onClick={onClose}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "12px",
+              boxShadow: "0 24px 38px rgba(0,0,0,0.25)",
+              padding: 0,
+              width: "90%",
+              maxWidth: "900px",
+              maxHeight: "90vh",
+              overflow: "auto",
+            }}
+            onClick={(e) => e.stopPropagation()}
           >
-            {loading ? "Saving..." : event ? "Update Event" : "Create Event"}
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+            <div
+              style={{
+                borderBottom: "1px solid #eaeaea",
+                padding: "24px 32px",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 600,
+                  letterSpacing: "-0.5px",
+                  color: "#111",
+                }}
+              >
+                {event ? "Edit Event" : "Create Event"}
+              </Typography>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <div style={{ padding: "32px" }}>
+                {error && (
+                  <Box
+                    sx={{
+                      mb: 4,
+                      p: 3,
+                      bgcolor: "rgba(255, 0, 0, 0.05)",
+                      borderRadius: 2,
+                      border: "1px solid rgba(255, 0, 0, 0.1)",
+                    }}
+                  >
+                    <Typography color="#d32f2f" fontWeight={500}>
+                      {error}
+                    </Typography>
+                  </Box>
+                )}
+
+                <div style={{ marginBottom: "48px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 3,
+                      fontWeight: 600,
+                      fontSize: "1.2rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: "#666",
+                    }}
+                  >
+                    Basic Information
+                  </Typography>
+
+                  <GridContainer spacing={3}>
+                    <GridItem xs={12}>
+                      <TextField
+                        name="name"
+                        label="Event Name"
+                        fullWidth
+                        required
+                        value={formData.name || ""}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <TextField
+                        name="venue_name"
+                        label="Venue Name"
+                        fullWidth
+                        required
+                        value={formData.venue_name || ""}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <TextField
+                        name="address"
+                        label="Address"
+                        fullWidth
+                        required
+                        value={formData.address || ""}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DateTimePicker
+                          label="Start Time"
+                          value={parseDate(formData.start_time)}
+                          onChange={(date) =>
+                            handleDateChange("start_time", date)
+                          }
+                          sx={{
+                            width: "100%",
+                            mt: 2,
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "8px",
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DateTimePicker
+                          label="End Time"
+                          value={parseDate(formData.end_time)}
+                          onChange={(date) =>
+                            handleDateChange("end_time", date)
+                          }
+                          sx={{
+                            width: "100%",
+                            mt: 2,
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "8px",
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </GridItem>
+                  </GridContainer>
+                </div>
+
+                <div style={{ marginBottom: "48px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 3,
+                      fontWeight: 600,
+                      fontSize: "1.2rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: "#666",
+                    }}
+                  >
+                    Ticket Information
+                  </Typography>
+
+                  <GridContainer spacing={3}>
+                    <GridItem xs={12} md={6}>
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      >
+                        <InputLabel>Ticket Status</InputLabel>
+                        <Select
+                          name="ticket_status"
+                          value={formData.ticket_status || "Available"}
+                          label="Ticket Status"
+                          onChange={handleSelectChange}
+                        >
+                          {TICKET_STATUS_OPTIONS.map((status) => (
+                            <MenuItem key={status} value={status}>
+                              {status}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <TextField
+                        name="ticket_link"
+                        label="Ticket Link"
+                        fullWidth
+                        value={formData.ticket_link || ""}
+                        onChange={handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <TextField
+                        name="price"
+                        label="Price"
+                        type="number"
+                        fullWidth
+                        value={formData.price || ""}
+                        onChange={handleNumberChange}
+                        margin="normal"
+                        variant="outlined"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      />
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      >
+                        <InputLabel>Currency</InputLabel>
+                        <Select
+                          name="currency"
+                          value={formData.currency || "USD"}
+                          label="Currency"
+                          onChange={handleSelectChange}
+                        >
+                          {CURRENCY_OPTIONS.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                  </GridContainer>
+                </div>
+
+                <div style={{ marginBottom: "48px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 3,
+                      fontWeight: 600,
+                      fontSize: "1.2rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: "#666",
+                    }}
+                  >
+                    Event Details
+                  </Typography>
+
+                  <TextField
+                    name="description"
+                    label="Description"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={formData.description || ""}
+                    onChange={handleChange}
+                    margin="normal"
+                    variant="outlined"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                      },
+                    }}
+                  />
+
+                  <Box sx={{ mt: 4, mb: 3 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        mb: 2,
+                        fontWeight: 500,
+                        color: "#333",
+                      }}
+                    >
+                      Event Poster
+                    </Typography>
+                    <ImageUploader
+                      onImageUploaded={(imageUrl) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          poster_url: imageUrl,
+                        }));
+                      }}
+                      currentImage={formData.poster_url}
+                      label="Upload Event Poster"
+                      required={true}
+                    />
+                  </Box>
+                </div>
+
+                <div style={{ marginBottom: "48px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 3,
+                      fontWeight: 600,
+                      fontSize: "1.2rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: "#666",
+                    }}
+                  >
+                    Lineup
+                  </Typography>
+
+                  <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+                    <TextField
+                      label="Artist Name"
+                      fullWidth
+                      value={artistInput}
+                      onChange={(e) => setArtistInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addArtist();
+                        }
+                      }}
+                      variant="outlined"
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "8px",
+                        },
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={addArtist}
+                      disabled={!artistInput.trim()}
+                      sx={{
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        height: "56px",
+                        minWidth: "100px",
+                        backgroundColor: "#000",
+                        "&:hover": {
+                          backgroundColor: "#333",
+                        },
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+
+                  <Box
+                    sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}
+                  >
+                    {(formData.lineup || []).map((artist, index) => (
+                      <Chip
+                        key={index}
+                        label={artist}
+                        onDelete={() => removeArtist(index)}
+                        sx={{
+                          borderRadius: "6px",
+                          fontWeight: 500,
+                          mb: 1,
+                          p: 0.5,
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </div>
+
+                <div style={{ marginBottom: "40px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mb: 3,
+                      fontWeight: 600,
+                      fontSize: "1.2rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "1px",
+                      color: "#666",
+                    }}
+                  >
+                    Genres
+                  </Typography>
+
+                  <Box
+                    sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}
+                  >
+                    {GENRE_OPTIONS.map((genre) => {
+                      const isSelected = (formData.genres || []).includes(
+                        genre
+                      );
+                      return (
+                        <Chip
+                          key={genre}
+                          label={genre}
+                          onClick={() => toggleGenre(genre)}
+                          color={isSelected ? "primary" : "default"}
+                          variant={isSelected ? "filled" : "outlined"}
+                          sx={{
+                            mb: 1,
+                            borderRadius: "6px",
+                            p: 0.5,
+                            fontWeight: 500,
+                            bgcolor: isSelected ? "#000" : "transparent",
+                            color: isSelected ? "#fff" : "#000",
+                            borderColor: "#ccc",
+                            "&:hover": {
+                              bgcolor: isSelected ? "#333" : "#f5f5f5",
+                            },
+                          }}
+                        />
+                      );
+                    })}
+                  </Box>
+
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <TextField
+                      label="Custom Genre"
+                      fullWidth
+                      value={customGenreInput}
+                      onChange={(e) => setCustomGenreInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addCustomGenre();
+                        }
+                      }}
+                      variant="outlined"
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "8px",
+                        },
+                      }}
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={addCustomGenre}
+                      disabled={!customGenreInput.trim()}
+                      sx={{
+                        borderRadius: "8px",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        height: "56px",
+                        minWidth: "100px",
+                        backgroundColor: "#000",
+                        "&:hover": {
+                          backgroundColor: "#333",
+                        },
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  padding: "24px 32px",
+                  borderTop: "1px solid #eaeaea",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "16px",
+                  backgroundColor: "#f9f9f9",
+                }}
+              >
+                <Button
+                  onClick={onClose}
+                  disabled={loading}
+                  sx={{
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: "none",
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={loading}
+                  startIcon={loading ? <CircularProgress size={20} /> : null}
+                  sx={{
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    px: 4,
+                    py: 1.5,
+                    textTransform: "none",
+                    backgroundColor: "#000",
+                    "&:hover": {
+                      backgroundColor: "#333",
+                    },
+                  }}
+                >
+                  {loading
+                    ? "Saving..."
+                    : event
+                    ? "Update Event"
+                    : "Create Event"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

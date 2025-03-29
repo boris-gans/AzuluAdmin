@@ -63,7 +63,7 @@ const AppContent: React.FC = () => {
             fontWeight="700"
             letterSpacing="-0.03em"
           >
-            AZULU CRM
+            AZULU
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
             Please log in to access the admin dashboard
