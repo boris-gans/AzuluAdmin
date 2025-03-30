@@ -205,7 +205,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: 'none',
-          borderBottom: '1px solid #000000',
         },
       },
     },

@@ -227,7 +227,7 @@ const EventList: React.FC = () => {
             mb: 4,
           }}
         >
-          <Table sx={{ width: "calc(100% - 48px)", mx: "auto" }}>
+          <Table sx={{ mx: "0" }}>
             <TableHead>
               <TableRow sx={{ backgroundColor: "rgba(0,0,0,0.05)" }}>
                 <TableCell sx={{ fontWeight: 600, py: 2 }}>

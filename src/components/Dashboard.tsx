@@ -57,17 +57,16 @@ const Dashboard: React.FC = () => {
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
-              color: "black",
-            }}
-          >
-            Azulu Admin Dashboard
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <img
+              src="/Azulu black.png"
+              alt="Azulu Logo"
+              style={{
+                height: 40,
+                marginRight: 10,
+              }}
+            />
+          </Box>
           <Button
             color="inherit"
             onClick={logout}
