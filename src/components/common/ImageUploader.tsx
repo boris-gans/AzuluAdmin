@@ -114,7 +114,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
       // Post directly to the backend upload endpoint
       const response = await fetch(
-        "https://azulucrm.onrender.com/upload/image",
+        "https://azulucms.onrender.com/upload/image",
         {
           method: "POST",
           headers: {
