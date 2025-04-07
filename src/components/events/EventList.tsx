@@ -44,8 +44,10 @@ const EventList: React.FC = () => {
     try {
       setLoading(true);
       const data = await apiService.getEvents(0, 100, false);
+      const upcomingEvents = await apiService.getEvents(0, 100, true);
+      
       // Sort events by start time, newest first
-      const sortedEvents = [...data].sort(
+      const sortedEvents = [...data, ...upcomingEvents].sort(
         (a, b) =>
           new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
       );
