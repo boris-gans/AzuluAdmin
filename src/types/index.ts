@@ -3,8 +3,10 @@ export interface Event {
   name: string;
   venue_name: string;
   address: string;
+  start_date: string;
   start_time: string;
   end_time: string;
+  time_zone: string;
   ticket_status: "Available" | "Sold Out" | "Sold At The Door";
   ticket_link: string;
   lineup: string[];

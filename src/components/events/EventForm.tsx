@@ -18,9 +18,11 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { parseISO, isValid } from "date-fns";
+import { parseISO, isValid, format } from "date-fns";
 import { Event, EventCreate, EventUpdate } from "../../types";
 import apiService from "../../services/api";
 import ImageUploader from "../common/ImageUploader";
@@ -49,6 +51,32 @@ const GENRE_OPTIONS = [
   "Disco",
 ];
 
+// Common timezones
+const TIMEZONE_OPTIONS = [
+  "UTC",
+  "America/New_York",
+  "America/Los_Angeles",
+  "America/Chicago",
+  "Europe/London",
+  "Europe/Paris",
+  "Europe/Berlin",
+  "Europe/Amsterdam",
+  "Europe/Rome",
+  "Europe/Madrid",
+  "Europe/Stockholm",
+  "Europe/Oslo",
+  "Europe/Helsinki",
+  "Europe/Warsaw",
+  "Europe/Zurich",
+  "Europe/Lisbon",
+  "Europe/Athens",
+  "Europe/Istanbul",
+  "Asia/Dubai",
+  "Asia/Shanghai",
+  "Asia/Tokyo",
+  "Australia/Sydney",
+];
+
 interface EventFormProps {
   open: boolean;
   event: Event | null;
@@ -60,8 +88,10 @@ const EMPTY_EVENT: EventCreate = {
   name: "",
   venue_name: "",
   address: "",
-  start_time: new Date().toISOString(),
-  end_time: new Date(Date.now() + 3600000).toISOString(),
+  start_date: new Date().toISOString().split('T')[0] + " 00:00:00",
+  start_time: "00:00",
+  end_time: "01:00",
+  time_zone: "UTC",
   ticket_status: "Available",
   ticket_link: "",
   lineup: [],
@@ -89,6 +119,11 @@ const EventForm: React.FC<EventFormProps> = ({
   // Reset form when dialog opens or event changes
   useEffect(() => {
     if (event) {
+      console.log(event);
+      console.log(event.start_date);
+      // const formattedDate = format(event.start_date, "yyyy-MM-dd") + " 00:00:00";
+      // console.log(formattedDate);
+
       setFormData({ ...event });
     } else {
       setFormData({ ...EMPTY_EVENT });
@@ -116,15 +151,33 @@ const EventForm: React.FC<EventFormProps> = ({
   // Date handling
   const handleDateChange = (name: string, date: Date | null) => {
     if (date && isValid(date)) {
-      setFormData((prev) => ({ ...prev, [name]: date.toISOString() }));
+      if (name === "start_date") {
+        // Format as YYYY-MM-DD 00:00:00
+        const formattedDate = format(date, "yyyy-MM-dd") + " 00:00:00";
+        console.log(formattedDate);
+        setFormData((prev) => ({ ...prev, [name]: formattedDate }));
+      } else if (name === "start_time" || name === "end_time") {
+        // Format as HH:MM
+        const formattedTime = format(date, "HH:mm");
+        setFormData((prev) => ({ ...prev, [name]: formattedTime }));
+      }
     }
   };
 
-  // Parse ISO date string to Date object
+  // Parse date string to Date object
   const parseDate = (dateString?: string): Date | null => {
     if (!dateString) return null;
     try {
-      const date = parseISO(dateString);
+      // Handle start_date format (YYYY-MM-DD 00:00:00)
+      if (dateString.includes(" ")) {
+        const datePart = dateString.split(" ")[0];
+        return parseISO(datePart);
+      }
+      // Handle time format (HH:MM)
+      const [hours, minutes] = dateString.split(":");
+      const date = new Date();
+      date.setHours(parseInt(hours, 10));
+      date.setMinutes(parseInt(minutes, 10));
       return isValid(date) ? date : null;
     } catch (e) {
       return null;
@@ -348,7 +401,26 @@ const EventForm: React.FC<EventFormProps> = ({
 
                     <GridItem xs={12} md={6}>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DateTimePicker
+                        <DatePicker
+                          label="Event Date"
+                          value={parseDate(formData.start_date)}
+                          onChange={(date) =>
+                            handleDateChange("start_date", date)
+                          }
+                          sx={{
+                            width: "100%",
+                            mt: 2,
+                            "& .MuiOutlinedInput-root": {
+                              borderRadius: "8px",
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <TimePicker
                           label="Start Time"
                           value={parseDate(formData.start_time)}
                           onChange={(date) =>
@@ -367,7 +439,7 @@ const EventForm: React.FC<EventFormProps> = ({
 
                     <GridItem xs={12} md={6}>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DateTimePicker
+                        <TimePicker
                           label="End Time"
                           value={parseDate(formData.end_time)}
                           onChange={(date) =>
@@ -382,6 +454,32 @@ const EventForm: React.FC<EventFormProps> = ({
                           }}
                         />
                       </LocalizationProvider>
+                    </GridItem>
+
+                    <GridItem xs={12} md={6}>
+                      <FormControl
+                        fullWidth
+                        margin="normal"
+                        sx={{
+                          "& .MuiOutlinedInput-root": {
+                            borderRadius: "8px",
+                          },
+                        }}
+                      >
+                        <InputLabel>Time Zone</InputLabel>
+                        <Select
+                          name="time_zone"
+                          value={formData.time_zone || "UTC"}
+                          label="Time Zone"
+                          onChange={handleSelectChange}
+                        >
+                          {TIMEZONE_OPTIONS.map((timezone) => (
+                            <MenuItem key={timezone} value={timezone}>
+                              {timezone}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </GridItem>
                   </GridContainer>
                 </div>

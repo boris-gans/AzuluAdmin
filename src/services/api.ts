@@ -13,7 +13,8 @@ import {
 
 // The proxy setup isn't working properly, so let's use direct API access
 const directApi = axios.create({
-  baseURL: 'https://azulucms.onrender.com',
+  // baseURL: 'https://azulucms.onrender.com',
+  baseURL: 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
