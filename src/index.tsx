@@ -17,3 +17,7 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+// TO DO
+// - Change content section to 'customization'. Add more options and improve UI
+// - Connect CMS to Google Cloud Console. Export mailing list to csv and Google Contacts
