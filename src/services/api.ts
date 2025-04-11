@@ -8,7 +8,12 @@ import {
   ContentUpdate,
   CloudinarySignature,
   MailingListEntry,
-  MailingListResponse
+  MailingListResponse,
+  Dj,
+  DjCreate,
+  DjUpdate,
+  DjSocials,
+  DjSocialsCreate
 } from '../types';
 
 // The proxy setup isn't working properly, so let's use direct API access
@@ -121,6 +126,69 @@ export const apiService = {
       await directApi.delete(`/events/${id}`);
     } catch (error) {
       console.error(`Error deleting event ${id}:`, error);
+      throw error;
+    }
+  },
+
+  //DJ
+  getDjs: async (skip = 0, limit = 100): Promise<Dj[]> => {
+    try {
+      const { data } = await directApi.get('/djs', { 
+        params: { skip, limit } 
+      });
+      return data;
+    } catch (error) {
+      console.error('Error fetching djs:', error);
+      throw error;
+    }
+  },
+
+  getDj: async (id: number): Promise<Dj> => {
+    try {
+      const { data } = await directApi.get(`/djs/${id}`);
+      const {socials, ...rest} = data;
+      const response = {
+        ...rest,
+        DjSocials: socials
+      }
+      return response;
+    } catch (error) {
+      console.error(`Error fetching dj ${id}:`, error);
+      throw error;
+    }
+  },
+
+  createDj: async (dj: DjCreate): Promise<Dj> => {
+    try {
+      const {DjSocials, ...rest} = dj;
+      const payload = {
+        ...rest,
+        socials: DjSocials
+      }
+      console.log(payload);
+      const { data } = await directApi.post('/djs', payload);
+      return data;
+    } catch (error) {
+      console.error('Error creating dj:', error);
+      throw error;
+    }
+  },
+
+  updateDj: async (id: number, dj: DjUpdate): Promise<Dj> => {
+    try {
+      const { data } = await directApi.put(`/djs/${id}`, dj);
+      return data;
+    } catch (error) {
+      console.error(`Error updating dj ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteDj: async (id: number): Promise<void> => {
+    try {
+      await directApi.delete(`/djs/${id}`);
+    } catch (error) {
+      console.error(`Error deleting dj ${id}:`, error);
       throw error;
     }
   },
