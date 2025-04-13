@@ -1,0 +1,17 @@
+{
+    "alias": "Benja",
+    "profile_url": "https://res.cloudinary.com/dsjkhhpbl/image/upload/v1744371502/event_posters/hor7jpa2hkc1uqqooint.avif",
+    "id": 2,
+    "social_id": 2,
+    "socials": {
+        "instagram": "bgans101",
+        "tiktok": null,
+        "spotify": null,
+        "soundcloud": null,
+        "youtube": null,
+        "apple_music": null,
+        "id": 2
+    }
+}
+// to do
+// Take a look at the attatched json, this is a sample response of one dj from the new backend endpoint. Other than alias, nothing else is getting displayed in @DjForm.tsx . The values of the socials should be initialized with the ones that are already filled in, allowing the admin to actually edit it. Also, you display the profile_url in DjForm, and then allow them
