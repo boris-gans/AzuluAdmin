@@ -21,6 +21,37 @@ export interface EventCreate extends Omit<Event, 'id'> {}
 
 export interface EventUpdate extends Partial<EventCreate> {}
 
+
+export interface DjSocials {
+  id: number;
+  instagram: string;
+  spotify: string;
+  soundcloud: string;
+  apple_music: string;
+  youtube: string;
+  tiktok: string;
+}
+export interface DjSocialsCreate extends Omit<DjSocials, 'id'> {}
+
+export interface Dj {
+  id: number;
+  alias: string;
+  profile_url: string;
+  social_id: string;
+  socials?: DjSocials;
+}
+
+// DjCreate — socials is optional and can be omitted entirely
+export interface DjCreate extends Omit<Dj, 'id' | 'social_id' | 'socials'> {
+  socials?: DjSocialsCreate;
+}
+
+// DjUpdate — make all fields optional for PATCH-style updates
+export interface DjUpdate extends Partial<Omit<Dj, 'id' | 'social_id' | 'socials'>> {
+  socials?: Partial<DjSocialsCreate>;
+}
+
+
 export interface Content {
   id: number;
   key: string;

@@ -102,11 +102,15 @@ const EventList: React.FC = () => {
     }
   };
 
-  const formatEventDate = (dateString: string) => {
+  const formatEventDate = (event: Event) => {
     try {
-      return format(new Date(dateString), "MMM d, yyyy h:mm a");
+      // Format the date (without time part)
+      const date = format(new Date(event.start_date), "MMM d, yyyy");
+      
+      // Combine with time range and timezone
+      return `${date} • ${event.start_time} - ${event.end_time}`;
     } catch (err) {
-      return dateString;
+      return `${event.start_date} • ${event.start_time} - ${event.end_time}`;
     }
   };
 
@@ -240,6 +244,9 @@ const EventList: React.FC = () => {
                   Date & Time
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, py: 2 }}>
+                  Time Zone
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, py: 2 }}>
                   Ticket Status
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
@@ -277,7 +284,17 @@ const EventList: React.FC = () => {
                         letterSpacing: "-0.05em",
                       }}
                     >
-                      {formatEventDate(event.start_time)}
+                      {formatEventDate(event)}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: "0.85rem",
+                        fontWeight: 500,
+                        letterSpacing: "-0.05em",
+                      }}
+                    >
+                      {event.time_zone}
                     </TableCell>
                     <TableCell>
                       {getTicketStatusChip(event.ticket_status)}

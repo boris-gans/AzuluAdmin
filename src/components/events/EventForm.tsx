@@ -34,6 +34,7 @@ const GridItem = (props: any) => <Grid item {...props} />;
 // Predefined options
 const TICKET_STATUS_OPTIONS = ["Available", "Sold Out", "Sold At The Door"];
 const CURRENCY_OPTIONS = [
+  { label: "Select Currency", value: "" },
   { label: "EUR (€)", value: "EUR" },
   { label: "GBP (£)", value: "GBP" },
   { label: "USD ($)", value: "USD" },
@@ -53,28 +54,27 @@ const GENRE_OPTIONS = [
 
 // Common timezones
 const TIMEZONE_OPTIONS = [
-  "UTC",
-  "America/New_York",
-  "America/Los_Angeles",
-  "America/Chicago",
-  "Europe/London",
-  "Europe/Paris",
-  "Europe/Berlin",
-  "Europe/Amsterdam",
-  "Europe/Rome",
-  "Europe/Madrid",
-  "Europe/Stockholm",
-  "Europe/Oslo",
-  "Europe/Helsinki",
-  "Europe/Warsaw",
-  "Europe/Zurich",
-  "Europe/Lisbon",
-  "Europe/Athens",
-  "Europe/Istanbul",
-  "Asia/Dubai",
-  "Asia/Shanghai",
-  "Asia/Tokyo",
-  "Australia/Sydney",
+  { label: "Amsterdam", value: "Europe/Amsterdam" },
+  { label: "New York", value: "America/New_York" },
+  { label: "Los Angeles", value: "America/Los_Angeles" },
+  { label: "Chicago", value: "America/Chicago" },
+  { label: "London", value: "Europe/London" },
+  { label: "Paris", value: "Europe/Paris" },
+  { label: "Berlin", value: "Europe/Berlin" },
+  { label: "Rome", value: "Europe/Rome" },
+  { label: "Madrid", value: "Europe/Madrid" },
+  { label: "Stockholm", value: "Europe/Stockholm" },
+  { label: "Oslo", value: "Europe/Oslo" },
+  { label: "Helsinki", value: "Europe/Helsinki" },
+  { label: "Warsaw", value: "Europe/Warsaw" },
+  { label: "Zurich", value: "Europe/Zurich" },
+  { label: "Lisbon", value: "Europe/Lisbon" },
+  { label: "Athens", value: "Europe/Athens" },
+  { label: "Istanbul", value: "Europe/Istanbul" },
+  { label: "Dubai", value: "Asia/Dubai" },
+  { label: "Shanghai", value: "Asia/Shanghai" },
+  { label: "Tokyo", value: "Asia/Tokyo" },
+  { label: "Sydney", value: "Australia/Sydney" },
 ];
 
 interface EventFormProps {
@@ -89,9 +89,9 @@ const EMPTY_EVENT: EventCreate = {
   venue_name: "",
   address: "",
   start_date: new Date().toISOString().split('T')[0] + " 00:00:00",
-  start_time: "00:00",
+  start_time: "22:00",
   end_time: "01:00",
-  time_zone: "UTC",
+  time_zone: TIMEZONE_OPTIONS[0].value,
   ticket_status: "Available",
   ticket_link: "",
   lineup: [],
@@ -99,7 +99,7 @@ const EMPTY_EVENT: EventCreate = {
   description: "",
   poster_url: "",
   price: 0,
-  currency: "USD",
+  currency: "",
 };
 
 const EventForm: React.FC<EventFormProps> = ({
@@ -119,11 +119,6 @@ const EventForm: React.FC<EventFormProps> = ({
   // Reset form when dialog opens or event changes
   useEffect(() => {
     if (event) {
-      console.log(event);
-      console.log(event.start_date);
-      // const formattedDate = format(event.start_date, "yyyy-MM-dd") + " 00:00:00";
-      // console.log(formattedDate);
-
       setFormData({ ...event });
     } else {
       setFormData({ ...EMPTY_EVENT });
@@ -169,19 +164,31 @@ const EventForm: React.FC<EventFormProps> = ({
     if (!dateString) return null;
     try {
       // Handle start_date format (YYYY-MM-DD 00:00:00)
-      if (dateString.includes(" ")) {
-        const datePart = dateString.split(" ")[0];
+      if (dateString.includes("T")) {
+        const datePart = dateString.split("T")[0];
+        console.log(datePart);
         return parseISO(datePart);
+      } else {
+        return null;
       }
       // Handle time format (HH:MM)
-      const [hours, minutes] = dateString.split(":");
+      // const [hours, minutes] = dateString.split(":");
       const date = new Date();
-      date.setHours(parseInt(hours, 10));
-      date.setMinutes(parseInt(minutes, 10));
+      // date.setHours(parseInt(hours, 10));
+      // date.setMinutes(parseInt(minutes, 10));
       return isValid(date) ? date : null;
     } catch (e) {
       return null;
     }
+  };
+
+  const parseTime = (timeString?: string): Date | null => {
+    if (!timeString) return null;
+    const [hours, minutes] = timeString.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    return isValid(date) ? date : null;
   };
 
   // Lineup management
@@ -237,7 +244,7 @@ const EventForm: React.FC<EventFormProps> = ({
     setLoading(true);
 
     // Validate required fields
-    if (!formData.name || !formData.venue_name || !formData.address) {
+    if (!formData.name || !formData.venue_name || !formData.address || !formData.time_zone || !formData.description || !formData.poster_url || !formData.start_time || !formData.end_time) {
       setError("Please fill in all required fields");
       setLoading(false);
       return;
@@ -402,7 +409,7 @@ const EventForm: React.FC<EventFormProps> = ({
                     <GridItem xs={12} md={6}>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
-                          label="Event Date"
+                          label="Date"
                           value={parseDate(formData.start_date)}
                           onChange={(date) =>
                             handleDateChange("start_date", date)
@@ -422,7 +429,7 @@ const EventForm: React.FC<EventFormProps> = ({
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <TimePicker
                           label="Start Time"
-                          value={parseDate(formData.start_time)}
+                          value={parseTime(formData.start_time)}
                           onChange={(date) =>
                             handleDateChange("start_time", date)
                           }
@@ -441,7 +448,7 @@ const EventForm: React.FC<EventFormProps> = ({
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <TimePicker
                           label="End Time"
-                          value={parseDate(formData.end_time)}
+                          value={parseTime(formData.end_time)}
                           onChange={(date) =>
                             handleDateChange("end_time", date)
                           }
@@ -469,13 +476,14 @@ const EventForm: React.FC<EventFormProps> = ({
                         <InputLabel>Time Zone</InputLabel>
                         <Select
                           name="time_zone"
-                          value={formData.time_zone || "UTC"}
+                          value={formData.time_zone || ""}
                           label="Time Zone"
+                          required={true}
                           onChange={handleSelectChange}
                         >
                           {TIMEZONE_OPTIONS.map((timezone) => (
-                            <MenuItem key={timezone} value={timezone}>
-                              {timezone}
+                            <MenuItem key={timezone.value} value={timezone.value}>
+                              {timezone.label}
                             </MenuItem>
                           ))}
                         </Select>
@@ -574,7 +582,7 @@ const EventForm: React.FC<EventFormProps> = ({
                         <InputLabel>Currency</InputLabel>
                         <Select
                           name="currency"
-                          value={formData.currency || "USD"}
+                          value={formData.currency || ""}
                           label="Currency"
                           onChange={handleSelectChange}
                         >

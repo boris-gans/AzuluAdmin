@@ -8,12 +8,20 @@ import {
   ContentUpdate,
   CloudinarySignature,
   MailingListEntry,
-  MailingListResponse
+  MailingListResponse,
+  Dj,
+  DjCreate,
+  DjUpdate,
+  DjSocials,
+  DjSocialsCreate
 } from '../types';
 
 // The proxy setup isn't working properly, so let's use direct API access
 const directApi = axios.create({
-  baseURL: 'https://azulucms.onrender.com',
+  // baseURL: 'https://azulucms.onrender.com',
+  // baseURL: 'http://localhost:8000',
+  baseURL: 'https://azulucms-pr-1.onrender.com',
+
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -124,6 +132,68 @@ export const apiService = {
     }
   },
 
+  //DJ
+  getDjs: async (skip = 0, limit = 100): Promise<Dj[]> => {
+    try {
+      const { data } = await directApi.get('/djs', { 
+        params: { skip, limit } 
+      });
+      return data;
+    } catch (error) {
+      console.error('Error fetching djs:', error);
+      throw error;
+    }
+  },
+
+  getDj: async (id: number): Promise<Dj> => {
+    try {
+      const { data } = await directApi.get(`/djs/${id}`);
+      const {socials, ...rest} = data;
+      const response = {
+        ...rest,
+        socials: socials
+      }
+      return response;
+    } catch (error) {
+      console.error(`Error fetching dj ${id}:`, error);
+      throw error;
+    }
+  },
+
+  createDj: async (dj: DjCreate): Promise<Dj> => {
+    try {
+      const {socials, ...rest} = dj;
+      const payload = {
+        ...rest,
+        socials: socials
+      }
+      const { data } = await directApi.post('/djs', payload);
+      return data;
+    } catch (error) {
+      console.error('Error creating dj:', error);
+      throw error;
+    }
+  },
+
+  updateDj: async (id: number, dj: DjUpdate): Promise<Dj> => {
+    try {
+      const { data } = await directApi.put(`/djs/${id}`, dj);
+      return data;
+    } catch (error) {
+      console.error(`Error updating dj ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteDj: async (id: number): Promise<void> => {
+    try {
+      await directApi.delete(`/djs/${id}`);
+    } catch (error) {
+      console.error(`Error deleting dj ${id}:`, error);
+      throw error;
+    }
+  },
+
   // Content
   getContents: async (skip = 0, limit = 100): Promise<Content[]> => {
     try {
@@ -185,7 +255,7 @@ export const apiService = {
       console.error('Error getting Cloudinary signature:', error);
       throw error;
     }
-  },
+  },  
 
   // Mailing List
   getMailingList: async (skip = 0, limit = 20, subscribedOnly = true): Promise<MailingListResponse> => {
@@ -196,11 +266,14 @@ export const apiService = {
       
       // Handle case where API returns an array directly instead of {items, total} structure
       if (Array.isArray(data)) {
+        console.log(data)
+
         return {
           items: data,
           total: data.length + skip // Approximation since we don't know the total
         };
       }
+      console.log(data)
       
       return data;
     } catch (error) {
