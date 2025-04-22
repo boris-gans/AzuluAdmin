@@ -286,8 +286,8 @@ const ContentList: React.FC = () => {
               <TableRow>
                 <TableCell>Key</TableCell>
                 <TableCell>Type</TableCell>
-                <TableCell>String Collection</TableCell>
-                <TableCell>Big String</TableCell>
+                <TableCell>Content</TableCell>
+                {/* <TableCell>Big String</TableCell> */}
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -303,10 +303,19 @@ const ContentList: React.FC = () => {
                   <TableRow key={content.id}>
                     <TableCell>{content.key}</TableCell>
                     <TableCell>{getContentTypeLabel(content)}</TableCell>
-                    <TableCell>
-                      {formatStringCollection(content.string_collection)}
-                    </TableCell>
-                    <TableCell>{truncateString(content.big_string)}</TableCell>
+
+                    {/* normalize content previews */}
+                    {content.key === 'aboutPage' ? (
+                      <TableCell>{truncateString(content.big_string)}</TableCell>
+                    ) : content.key === 'movingBanner' ? (
+                      <TableCell>
+                        {formatStringCollection(content.string_collection)}
+                      </TableCell>
+                    ) : (
+                      // fallback for custom content
+                      <TableCell>Unable to preview</TableCell>
+                    )}
+
                     <TableCell>
                       <Box sx={{ display: "flex" }}>
                         <IconButton

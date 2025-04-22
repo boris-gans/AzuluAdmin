@@ -136,6 +136,7 @@ export const apiService = {
       const { data } = await directApi.get('/djs', { 
         params: { skip, limit } 
       });
+      console.log("djs: ", data);
       return data;
     } catch (error) {
       console.error('Error fetching djs:', error);
@@ -149,7 +150,7 @@ export const apiService = {
       const {socials, ...rest} = data;
       const response = {
         ...rest,
-        DjSocials: socials
+        socials: socials
       }
       return response;
     } catch (error) {
@@ -160,10 +161,10 @@ export const apiService = {
 
   createDj: async (dj: DjCreate): Promise<Dj> => {
     try {
-      const {DjSocials, ...rest} = dj;
+      const {socials, ...rest} = dj;
       const payload = {
         ...rest,
-        socials: DjSocials
+        socials: socials
       }
       console.log(payload);
       const { data } = await directApi.post('/djs', payload);
@@ -249,6 +250,7 @@ export const apiService = {
   getCloudinarySignature: async (): Promise<CloudinarySignature> => {
     try {
       const { data } = await directApi.get('/cloudinary/signature');
+      console.log(data);
       return data;
     } catch (error) {
       console.error('Error getting Cloudinary signature:', error);

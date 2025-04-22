@@ -38,17 +38,17 @@ export interface Dj {
   alias: string;
   profile_url: string;
   social_id: string;
-  DjSocials?: DjSocials;
+  socials?: DjSocials;
 }
 
-// DjCreate — DjSocials is optional and can be omitted entirely
-export interface DjCreate extends Omit<Dj, 'id' | 'social_id' | 'DjSocials'> {
-  DjSocials?: DjSocialsCreate;
+// DjCreate — socials is optional and can be omitted entirely
+export interface DjCreate extends Omit<Dj, 'id' | 'social_id' | 'socials'> {
+  socials?: DjSocialsCreate;
 }
 
 // DjUpdate — make all fields optional for PATCH-style updates
-export interface DjUpdate extends Partial<Omit<Dj, 'id' | 'social_id' | 'DjSocials'>> {
-  DjSocials?: Partial<DjSocialsCreate>;
+export interface DjUpdate extends Partial<Omit<Dj, 'id' | 'social_id' | 'socials'>> {
+  socials?: Partial<DjSocialsCreate>;
 }
 
 
