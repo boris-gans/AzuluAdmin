@@ -256,7 +256,7 @@ export const apiService = {
       console.error('Error getting Cloudinary signature:', error);
       throw error;
     }
-  },
+  },  
 
   // Mailing List
   getMailingList: async (skip = 0, limit = 20, subscribedOnly = true): Promise<MailingListResponse> => {
@@ -267,11 +267,14 @@ export const apiService = {
       
       // Handle case where API returns an array directly instead of {items, total} structure
       if (Array.isArray(data)) {
+        console.log(data)
+
         return {
           items: data,
           total: data.length + skip // Approximation since we don't know the total
         };
       }
+      console.log(data)
       
       return data;
     } catch (error) {

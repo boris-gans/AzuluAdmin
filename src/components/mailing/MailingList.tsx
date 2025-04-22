@@ -18,6 +18,7 @@ import {
   CircularProgress,
   Pagination,
 } from "@mui/material";
+import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from "@mui/icons-material/Delete";
 import apiService from "../../services/api";
 
@@ -104,6 +105,34 @@ const MailingList: React.FC = () => {
     });
   };
 
+  // CSV convert
+  const convertToGmailCSV = (data: any[]) => {
+    const headers = ['Name', 'Email Address'];
+    const csvRows = [
+      headers.join(','),
+      ...data.map(row => `"${row.name}","${row.email}"`)
+    ];
+    return csvRows.join('\n');
+  };
+  
+  // CSV download
+  const downloadCSV = (data: any[]) => {
+    const csv = convertToGmailCSV(data);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+  
+    const today = new Date().toISOString().split('T')[0]; // e.g. "2025-04-18"
+    const filename = `mailing_list_${today}.csv`;
+  
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  
+  
+
   return (
     <Box>
       <Box
@@ -116,17 +145,42 @@ const MailingList: React.FC = () => {
         <Typography variant="h5" fontWeight={600}>
           Mailing List
         </Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={subscribedOnly}
-                onChange={(e) => setSubscribedOnly(e.target.checked)}
-              />
-            }
-            label="Show subscribed only"
-          />
-        </FormGroup>
+        <Box display="flex" alignItems="center" gap={2}>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={subscribedOnly}
+                  onChange={(e) => setSubscribedOnly(e.target.checked)}
+                />
+              }
+              label="Show subscribed only"
+            />
+          </FormGroup>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => downloadCSV(entries)}
+            startIcon={<DownloadIcon />}
+            sx={{
+              borderBottom: "3px solid #000",
+              borderRight: "3px solid #000",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                transform: "translate(-2px, -2px)",
+                boxShadow: "4px 4px 0 rgba(0,0,0,0.2)",
+              },
+              "&:active": {
+                transform: "translate(0px, 0px)",
+                boxShadow: "0px 0px 0 rgba(0,0,0,0.2)",
+                borderBottom: "1px solid #000",
+                borderRight: "1px solid #000",
+              },
+            }}
+          >
+            Download as CSV
+          </Button>
+        </Box>
       </Box>
 
       {error && (

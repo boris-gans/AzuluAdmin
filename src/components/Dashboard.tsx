@@ -142,7 +142,7 @@ const Dashboard: React.FC = () => {
             <Tab label="Events" id="tab-0" aria-controls="tabpanel-0" />
             <Tab label="Content" id="tab-1" aria-controls="tabpanel-1" />
             <Tab label="Mailing List" id="tab-2" aria-controls="tabpanel-2" />
-            <Tab label="DJs" id="tab-3" aria-controls="tabpanel-3" />
+            {/* <Tab label="DJs" id="tab-3" aria-controls="tabpanel-3" /> */}
           </Tabs>
 
           <TabPanel value={tabValue} index={0}>
@@ -154,9 +154,9 @@ const Dashboard: React.FC = () => {
           <TabPanel value={tabValue} index={2}>
             <MailingList />
           </TabPanel>
-          <TabPanel value={tabValue} index={3}>
+          {/* <TabPanel value={tabValue} index={3}>
             <DjList />
-          </TabPanel>
+          </TabPanel> */}
         </Paper>
       </Container>
     </Box>
