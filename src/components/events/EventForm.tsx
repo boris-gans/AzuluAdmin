@@ -119,11 +119,6 @@ const EventForm: React.FC<EventFormProps> = ({
   // Reset form when dialog opens or event changes
   useEffect(() => {
     if (event) {
-      console.log(event);
-      console.log(event.start_date);
-      // const formattedDate = format(event.start_date, "yyyy-MM-dd") + " 00:00:00";
-      // console.log(formattedDate);
-
       setFormData({ ...event });
     } else {
       setFormData({ ...EMPTY_EVENT });
